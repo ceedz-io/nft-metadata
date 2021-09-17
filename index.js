@@ -39,8 +39,25 @@ const parseTokenID = (tokenID) => {
     return data
 }
 
+const getTokenData = (tokenID) => {
+    let data = parseTokenID(tokenID)
+    let tid = BigInt(tokenID)
+    let b = Buffer.from(pad(tid.toString(16)),'hex')
+
+    if(data.error) return data
+    let meta = {
+        id: '0x' + b.toString('hex'),
+        description: '',
+        external_url: '',
+        image: '',
+        name: '',
+        attributes: data
+    }
+    return meta
+}
+
 var server = http.createServer((req, res) => {
-    var body = JSON.stringify(parseTokenID(getTokenID(req.url)),null,2)
+    var body = JSON.stringify(getTokenData(getTokenID(req.url)),null,2)
     var content_length = body.length;
     res.writeHead(200, {
         'Content-Length': content_length,
